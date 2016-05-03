@@ -3,8 +3,8 @@ source("R/functions.R")
 
 set.seed(12345)
 df <- data.table(x = rnorm(10000, mean = 0.05, sd = 0.04))
-y_mean <- 0.3
-y_sd <- 0.2
+y_mean <- 0.03
+y_sd <- 0.02
 df[, y1 := rmultvar(x, r = 0.9999, y_mean, y_sd)]
 df[, y2 := rmultvar(x, r = 0.5, y_mean, y_sd)]
 df[, y3 := rmultvar(x, r = 0, y_mean, y_sd)]
