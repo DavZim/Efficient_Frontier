@@ -13,4 +13,4 @@ z_sd <- 0.03
 df[, y := rmultvar(x, r = 0, y_mean, y_sd)]
 df[, z := rmultvar(x, r = 0, z_mean, z_sd)]
 
-write.csv(df, file = "data/mult_assets.csv")
+write.csv(df, file = "../data/mult_assets.csv")
