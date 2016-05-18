@@ -36,4 +36,4 @@ dt[, ':=' (mt_price = mean(price),
 dt <- dt[, .(date = mt_date, ticker, price = mt_price)]
 dt <- unique(dt)
 
-write.csv(dt, file = "../data/fin_data.csv", row.names = F)
+write.csv(dt, file = "data/fin_data.csv", row.names = F)
