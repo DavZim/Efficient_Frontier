@@ -32,7 +32,7 @@ plot_two <- ggplot() +
   geom_point(data = two, aes(x = sd_p, y = er_p, color = wx)) +
   geom_point(data = df_table[variable != "z"],
              aes(x = sd, y = mean), color = "red", size = 3, shape = 18) +
-  theme_bw() + ggtitle("Possible portfolios with two risky assets") +
+  theme_bw() + ggtitle("Possible Portfolios with Two Risky Assets") +
   xlab("Volatility") + ylab("Expected Returns") +
   scale_y_continuous(label = percent, limits = c(0, max(two$er_p) * 1.2)) +
   scale_x_continuous(label = percent, limits = c(0, max(two$sd_p) * 1.2)) +
@@ -61,7 +61,7 @@ three <- three[wx >= 0 & wy >= 0 & wz >= 0]
 plot_three <- ggplot() +
   geom_point(data = three, aes(x = sd_p, y = er_p, color = wx - wz)) +
   geom_point(data = df_table, aes(x = sd, y = mean), color = "red", size = 3, shape = 18) +
-  theme_bw() + ggtitle("Possible portfolios with three risky assets") +
+  theme_bw() + ggtitle("Possible Portfolios with Three Risky Assets") +
   xlab("Volatility") + ylab("Expected Returns") +
   scale_y_continuous(label = percent, limits = c(0, max(three$er_p) * 1.2)) +
   scale_x_continuous(label = percent, limits = c(0, max(three$sd_p) * 1.2)) +
