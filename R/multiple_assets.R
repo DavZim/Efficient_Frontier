@@ -65,8 +65,8 @@ plot_three <- ggplot() +
   xlab("Volatility") + ylab("Expected Returns") +
   scale_y_continuous(label = percent, limits = c(0, max(three$er_p) * 1.2)) +
   scale_x_continuous(label = percent, limits = c(0, max(three$sd_p) * 1.2)) +
-  scale_color_gradient(name = expression(omega[x] - omega[z]), labels = percent,
-                        low = "#FFFF00", high = "#0000FF")
+  scale_color_gradientn(colors = c("red", "blue", "yellow"),
+                        name = expression(omega[x] - omega[z]), labels = percent)
 
 ggsave(plot_three, file = "three_assets.png", scale = 1, dpi = 600)
 
