@@ -82,57 +82,58 @@ rmultvar = function(x, r, y_mean, y_sd){
 #' The function calculates A, B, C, and Delta for a given set of returns
 #' @param x a data.table with the columsn date, ticker, and returns
 #'
-#' @return a list of A, B, C, and D that can be used to compute the efficient frontier
+#' @return a list of alpha, beta, gamma, and delta that can be used to compute the efficient frontier
 #' @export
 #'
 #' @examples
 #'
-calcABCDs <- function(x) {
-  # based on: http://www.calculatinginvestor.com/2011/06/07/efficient-frontier-1/
-
+calcEFParamsLong <- function(x) {
   x <- x[is.finite(ret), .(date, ticker, ret)]
 
   rets <- dcast(x, formula = date ~ ticker, value.var = "ret")[, date := NULL]
-  zbar <- colMeans(rets, na.rm = T)
-  s <- var(rets, na.rm = T)
-  invS <- solve(s)
-
-  i <- matrix(1, nrow = length(zbar))
-
-  A <- t(i) %*% invS %*% i %>% as.numeric
-  B <- t(i) %*% invS %*% zbar %>% as.numeric
-  C <- t(zbar) %*% solve(s) %*% zbar %>% as.numeric
-  D <- A * C - B * B
-
-  return(list(A = A, B = B, C = C, D = D))
+  
+  retbar <- colMeans(rets, na.rm = T)
+  covs <- var(rets, na.rm = T) # calculates the covariance of the returns
+  invS <- solve(covs)
+  i <- matrix(1, nrow = length(retbar))
+  
+  alpha <- t(i) %*% invS %*% i
+  beta <- t(i) %*% invS %*% retbar
+  gamma <- t(retbar) %*% invS %*% retbar
+  delta <- alpha * gamma - beta * beta
+  
+  retlist <- list(alpha = as.numeric(alpha),
+                  beta = as.numeric(beta),
+                  gamma = as.numeric(gamma),
+                  delta = as.numeric(delta))
+  
+  return(retlist)
 }
 
 
 #' Calculate the Efficient Frontier Values
 #' The function calculates the y-values for an efficient frontier for given x-values
-#' @param xvals a vector of x-values
-#' @param ABCDList a list containing the specifications (i.e., output of calcABCDs)
+#' @param xvals a vector of x-values 
+#' @param abcd a list of the values for the efficient frontier as outputted by calcEFParamsLong
 #' @param upper a boolean value if the upper (efficient) or lower (inefficient) frontier should be returned
 #'
 #' @return a vector of y-values for the efficient frontier
 #' @export
 #'
 #' @examples
-calcEffPoints <- function(xvals, ABCDList, upper = T){
-  #return points on the efficient frontier,
-  A <- ABCDList$A
-  B <- ABCDList$B
-  C <- ABCDList$C
-  D <- ABCDList$D
-
-  BA <- B/A
+calcEFValues <- function(x, abcd, upper = T) {
+  alpha <- abcd$alpha
+  beta <- abcd$beta
+  gamma <- abcd$gamma
+  delta <- abcd$delta
+  
   if (upper) {
-    retVec <- BA + sqrt(BA ^ 2 - (C - D * xvals ^ 2) / (A))
+    retval <- beta / alpha + sqrt((beta / alpha) ^ 2 - (gamma - delta * x ^ 2) / (alpha))
+  } else {
+    retval <- beta / alpha - sqrt((beta / alpha) ^ 2 - (gamma - delta * x ^ 2) / (alpha))
   }
-  else {
-    retVec <- BA - sqrt(BA ^ 2 - (C - D * xvals ^ 2) / (A))
-  }
-  return(retVec)
+  
+  return(retval)
 }
 
 

@@ -41,7 +41,7 @@ plot_two <- ggplot() +
 ggsave(plot_two, file = "two_assets.png", scale = 1, dpi = 600)
 
 # three assets
-three_assets_seq <- seq(from = 0, to = 1, length.out = 500)
+three_assets_seq <- seq(from = 0, to = 1, length.out = 1000)
 
 three <- data.table(wx = rep(three_assets_seq, each = length(three_assets_seq)),
                       wy = rep(three_assets_seq, length(three_assets_seq)))
@@ -69,56 +69,3 @@ plot_three <- ggplot() +
                         name = expression(omega[x] - omega[z]), labels = percent)
 
 ggsave(plot_three, file = "three_assets.png", scale = 1, dpi = 600)
-
-
-#
-# # with efficient frontier
-# calcABCDList <- function(rets) {
-#   library(magrittr)
-#   retbar <- colMeans(rets, na.rm = T)
-#   covs <- var(rets, na.rm = T) # calculates the covariance of the returns
-#   invS <- solve(covs)
-#
-#   i <- matrix(1, nrow = length(retbar))
-#
-#   A <- t(i) %*% invS %*% i %>% as.numeric
-#   B <- t(i) %*% invS %*% retbar %>% as.numeric
-#   C <- t(retbar) %*% invS %*% retbar %>% as.numeric
-#   D <- A * C - B * B
-#   return(list(A = A, B = B, C = C, D = D))
-# }
-# calcEffPoints <- function(x, ABCD, upper = T) {
-#
-#   if (upper) {
-#     ABCD$B / ABCD$A + sqrt((ABCD$B / ABCD$A) ^ 2 - (ABCD$C - ABCD$D * x ^ 2) / (ABCD$A))
-#   } else {
-#     ABCD$B / ABCD$A - sqrt((ABCD$B / ABCD$A) ^ 2 - (ABCD$C - ABCD$D * x ^ 2) / (ABCD$A))
-#   }
-# }
-#
-# abcds <- calcABCDList(df)
-#
-# df_table <- melt(df)[, .(er = mean(value),
-#                          sd = sd(value)), by = variable]
-#
-#
-# plot_ef <- ggplot(df_table, aes(x = sd, y = er)) +
-#   # add the possible portfoliols
-#   geom_point(data = three, aes(x = sd_p, y = er_p, color = wx - wz)) +
-#   # add the stocks
-#   geom_point(size = 4, color = "red", shape = 18) +
-#   # add the upper efficient frontier
-#   stat_function(fun = calcEffPoints, args = list(ABCD = abcds, upper = T), n = 10000,
-#                 color = "red") +
-#   # add the lower "efficient" frontier
-#   stat_function(fun = calcEffPoints, args = list(ABCD = abcds, upper = F), n = 10000,
-#                 color = "blue") +
-#   # miscellaneous, design functions
-#   theme_bw() + ggtitle("Efficient frontier with short-selling") +
-#   xlab("Volatility") + ylab("Expected Returns") +
-#   scale_y_continuous(label = percent, limits = c(0, max(df_table$er) * 1.2)) +
-#   scale_x_continuous(label = percent, limits = c(0, max(df_table$sd) * 1.2)) +
-#   scale_color_gradient(name = expression(omega[x] - omega[z]), labels = percent,
-#                        low = "#FFFF00", high = "#0000FF")
-#
-# ggsave(plot_ef, file = "plot_efficient_frontier.png", scale = 1, dpi = 600)
